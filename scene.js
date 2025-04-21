@@ -1,4 +1,6 @@
 // scene.js
+import { createSpaceship } from './spaceship.js'; // Import the updated function
+
 export async function createScene(engine, canvas) {
     const scene = new BABYLON.Scene(engine);
     const root = new BABYLON.TransformNode('root', scene);
@@ -165,23 +167,10 @@ export async function createScene(engine, canvas) {
     }
 
     // --- Ship ---
-    const ship = BABYLON.MeshBuilder.CreateBox('ship', { height: 0.5, width: 0.5, depth: 1 }, scene);
-    ship.material = new BABYLON.StandardMaterial('shipMat', scene);
-    ship.material.diffuseColor = new BABYLON.Color3(0.7, 0.7, 0.7);
-    ship.position = new BABYLON.Vector3(0, 0, -10);
+    // Use the imported function - can pass options here if desired
+    // e.g., const ship = createSpaceship(scene, { bodyLength: 1.2, wingSpan: 2.0 });
+    const ship = createSpaceship(scene); // Creates ship with default parameters
     ship.parent = root;
-    const nose = BABYLON.MeshBuilder.CreateCylinder('noseCone', { diameterTop: 0, diameterBottom: 0.3, height: 0.7, tessellation: 16 }, scene);
-    nose.rotation.x = Math.PI/2;
-    nose.position = new BABYLON.Vector3(0, 0, 0.85);
-    nose.parent = ship;
-    const wingOpts = { width: 1.5, height: 0.5 };
-    const wingL = BABYLON.MeshBuilder.CreatePlane('wingLeft', wingOpts, scene);
-    wingL.rotation.x = Math.PI/2;
-    wingL.position = new BABYLON.Vector3(-1, 0, 0);
-    wingL.material = ship.material;
-    wingL.parent = ship;
-    const wingR = wingL.clone('wingRight');
-    wingR.position.x = 1;
 
     // --- Controls ---
     const inputMap = {};
@@ -215,6 +204,7 @@ export async function createScene(engine, canvas) {
              });
         }
 
+        // Ship controls update
         const speed = 0.1, rot = 0.02;
         if (inputMap['w']) ship.translate(BABYLON.Axis.Z, speed, BABYLON.Space.LOCAL);
         if (inputMap['s']) ship.translate(BABYLON.Axis.Z, -speed, BABYLON.Space.LOCAL);
